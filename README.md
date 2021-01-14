@@ -1,2 +1,2 @@
-# limited_number
+# limited-number
 C++ safe limited number types

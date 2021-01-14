@@ -40,10 +40,11 @@ public:
 
 } // namespace limited_number_strategies
 
-template <typename T, T min, T max, typename limited_number_strategy = limited_number_strategies::clamp<T>>
+template <typename T, typename S, S min, S max, typename limited_number_strategy = limited_number_strategies::clamp<T>>
 class limited_number
 {
 static_assert(std::is_arithmetic<T>::value, "T should be an arithmetic type");
+static_assert(std::is_integral<S>::value, "S should be an integral type");
 
 public:
     limited_number() = default;
@@ -67,47 +68,50 @@ public:
 private:
     void fix_and_set(T v)
     {
-        val_ = limited_number_strategy()(v, min, max);
+        val_ = limited_number_strategy()(v, static_cast<T>(min), static_cast<T>(max));
     }
     
 private:
     T val_ = min;
 };
 
-template <typename T, T min, T max, typename limited_number_strategy = limited_number_strategies::clamp<T>>
-T operator+(limited_number<T, min, max, limited_number_strategy>& a, T b)
+template <typename T, typename S, S min, S max, typename limited_number_strategy = limited_number_strategies::clamp<T>>
+T operator+(limited_number<T, S, min, max, limited_number_strategy>& a, T b)
 {
-    limited_number<T, min, max, limited_number_strategy> c = *a;
+    limited_number<T, S, min, max, limited_number_strategy> c = *a;
     c += b;
     return c;
 }
 
-template <typename T, T min, T max, typename limited_number_strategy = limited_number_strategies::clamp<T>>
-T operator-(limited_number<T, min, max, limited_number_strategy>& a, T b)
+template <typename T, typename S, S min, S max, typename limited_number_strategy = limited_number_strategies::clamp<T>>
+T operator-(limited_number<T, S, min, max, limited_number_strategy>& a, T b)
 {
-    limited_number<T, min, max, limited_number_strategy> c = *a;
+    limited_number<T, S, min, max, limited_number_strategy> c = *a;
     c -= b;
     return c;
 }
 
-template <typename T, T min, T max, typename limited_number_strategy = limited_number_strategies::clamp<T>>
-T operator*(limited_number<T, min, max, limited_number_strategy>& a, T b)
+template <typename T, typename S, S min, S max, typename limited_number_strategy = limited_number_strategies::clamp<T>>
+T operator*(limited_number<T, S, min, max, limited_number_strategy>& a, T b)
 {
-    limited_number<T, min, max, limited_number_strategy> c = *a;
+    limited_number<T, S, min, max, limited_number_strategy> c = *a;
     c *= b;
     return c;
 }
 
-template <typename T, T min, T max, typename limited_number_strategy = limited_number_strategies::clamp<T>>
-T operator/(limited_number<T, min, max, limited_number_strategy>& a, T b)
+template <typename T, typename S, S min, S max, typename limited_number_strategy = limited_number_strategies::clamp<T>>
+T operator/(limited_number<T, S, min, max, limited_number_strategy>& a, T b)
 {
-    limited_number<T, min, max, limited_number_strategy> c = *a;
+    limited_number<T, S, min, max, limited_number_strategy> c = *a;
     c /= b;
     return c;
 }
 
 template <int min, int max, typename limited_number_strategy = limited_number_strategies::clamp<int>>
-using limited_int = limited_number<int, min, max, limited_number_strategy>;
+using limited_int = limited_number<int, int, min, max, limited_number_strategy>;
+
+template <int min, int max, typename limited_number_strategy = limited_number_strategies::clamp<float>>
+using limited_float = limited_number<float, int, min, max, limited_number_strategy>;
 
 } // namespace estd
 
