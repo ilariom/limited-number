@@ -2,6 +2,8 @@
 #define __LIMITED_NUMBER_H__
 
 #include <algorithm>
+#include <cstdint>
+#include <cassert>
 
 namespace estd
 {
@@ -107,11 +109,29 @@ T operator/(limited_number<T, S, min, max, limited_number_strategy>& a, T b)
     return c;
 }
 
-template <int min, int max, typename limited_number_strategy = limited_number_strategies::clamp<int>>
-using limited_int = limited_number<int, int, min, max, limited_number_strategy>;
+#define LIMIT_INTS(name, type)  \
+    template <type min, type max, typename limited_number_strategy = limited_number_strategies::clamp<type>>   \
+    using name = limited_number<type, type, min, max, limited_number_strategy>;    
 
-template <int min, int max, typename limited_number_strategy = limited_number_strategies::clamp<float>>
-using limited_float = limited_number<float, int, min, max, limited_number_strategy>;
+LIMIT_INTS(limited_int, int)
+LIMIT_INTS(limited_int8, int8_t)
+LIMIT_INTS(limited_int16, int16_t)
+LIMIT_INTS(limited_int32, int32_t)
+LIMIT_INTS(limited_int64, int64_t)
+LIMIT_INTS(limited_uint8, uint8_t)
+LIMIT_INTS(limited_uint16, uint16_t)
+LIMIT_INTS(limited_uint32, uint32_t)
+LIMIT_INTS(limited_uint64, uint64_t)
+
+#define LIMIT_FLOATS(name, type, cont_type)  \
+    template <cont_type min, cont_type max, typename limited_number_strategy = limited_number_strategies::clamp<type>>     \
+    using name = limited_number<type, cont_type, min, max, limited_number_strategy>;
+
+LIMIT_FLOATS(limited_float, float, int64_t)
+LIMIT_FLOATS(limited_double, double, int64_t)
+
+#undef LIMIT_INTS
+#undef LIMIT_FLOATS
 
 } // namespace estd
 
